@@ -1,0 +1,99 @@
+data<-read.csv("ts1.csv")
+data
+str(data)
+outcome=ts(data[,2],start=c(1990,1),frequency=12)
+outcome
+vix=ts(data[,3],start=c(1990,1),frequency=12)
+red=ts(data[,4],start=c(1990,1),frequency=12)
+econ=ts(data[,5],start=c(1990,1),frequency=12)
+mon=ts(data[,6],start=c(1990,1),frequency=12)
+red
+econ
+mon
+Model1=lm(outcome~vix)
+summary(Model1)
+str(Model1)
+a1=Model1$coefficients[1]
+b1=Model1$coefficients[2]
+a1
+b1
+Model2=lm(outcome~red)
+summary(Model2)
+str(Model2)
+a2=Model2$coefficients[1]
+b2=Model2$coefficients[2]
+a2
+b2
+Model3=lm(outcome~econ)
+summary(Model3)
+str(Model3)
+a3=Model3$coefficients[1]
+b3=Model3$coefficients[2]
+a3
+b3
+Model4=lm(outcome~mon)
+summary(Model4)
+str(Model4)
+a4=Model4$coefficients[1]
+b4=Model4$coefficients[2]
+a4
+b4
+length(outcome)
+length(vix)
+past=length(vix)-60
+past
+T=60
+T
+fcast1=matrix(NA,nrow=T,ncol=1)
+for (i in 1:T)
+{
+  model11=lm(outcome[1:(past-61+i)]~vix[1:(past-61+i)])
+  fcast1[i]=model11$coefficients[1]+model11$coefficients[2]*vix[(past+i)]
+}
+fcast1
+fcast2=matrix(NA,nrow=T,ncol=1)
+for (i in 1:T)
+{
+  model12=lm(outcome[1:(past-61+i)]~red[1:(past-61+i)])
+  fcast2[i]=model12$coefficients[1]+model12$coefficients[2]*red[(past+i)]
+}
+fcast2
+fcast3=matrix(NA,nrow=T,ncol=1)
+for (i in 1:T)
+{
+  model13=lm(outcome[1:(past-61+i)]~econ[1:(past-61+i)])
+  fcast3[i]=model13$coefficients[1]+model13$coefficients[2]*econ[(past+i)]
+}
+fcast3
+fcast4=matrix(NA,nrow=T,ncol=1)
+for (i in 1:T)
+{
+  model14=lm(outcome[1:(past-61+i)]~mon[1:(past-61+i)])
+  fcast4[i]=model14$coefficients[1]+model14$coefficients[2]*mon[(past+i)]
+}
+fcast4
+actural=outcome[243:302]
+length(actural)
+actural
+msfe1=mean((fcast1-actural)^2)
+msfe1
+msfe2=mean((fcast2-actural)^2)
+msfe2
+msfe3=mean((fcast3-actural)^2)
+msfe3
+msfe4=mean((fcast4-actural)^2)
+msfe4
+benchmark=matrix(NA,nrow=T,ncol=1)
+for (i in 1:T)
+{benchmark[i]=outcome[241+i]}
+benchmark
+msfe5=mean((benchmark-actural)^2)
+msfe5
+t1=(fcast1-actural)^2-(benchmark-actural)^2
+t2=(fcast2-actural)^2-(benchmark-actural)^2
+t3=(fcast3-actural)^2-(benchmark-actural)^2
+t4=(fcast4-actural)^2-(benchmark-actural)^2
+t.test(t1)
+t.test(t2)
+t.test(t3)
+t.test(t4)
